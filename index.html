@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리 학교 칭찬 배달부</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --bg-color: #f8f9fa;
+            --card-target: #e8f4fd;
+            --card-me: #f1f3f5;
+        }
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+        .section {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .section.target { background-color: var(--card-target); }
+        .section.me { background-color: var(--card-me); }
+        h2 {
+            font-size: 16px;
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 5px;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus {
+            outline: 2px solid var(--primary-color);
+        }
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #5b4cc4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌟 우리 학교 칭찬 배달부 🌟</h1>
+    
+    <form id="praiseForm">
+        <div class="section target">
+            <h2>💖 정말 멋진 내 친구는?</h2>
+            <div class="row">
+                <div class="input-group">
+                    <label>학년</label>
+                    <input type="number" id="targetGrade" placeholder="예) 2" required min="1" max="3">
+                </div>
+                <div class="input-group">
+                    <label>반</label>
+                    <input type="number" id="targetClass" placeholder="예) 5" required min="1" max="15">
+                </div>
+            </div>
+            <div class="input-group" style="margin-bottom: 10px;">
+                <label>이름</label>
+                <input type="text" id="targetName" placeholder="친구 이름을 정확히 적어주세요" required>
+            </div>
+            <div class="input-group">
+                <label>칭찬 이유</label>
+                <textarea id="reason" placeholder="친구의 멋진 점을 구체적으로 적어주세요! (예: 체육시간에 공을 주워줬음)" required></textarea>
+            </div>
+        </div>
+
+        <div class="section me">
+            <h2>👤 칭찬을 보내는 사람은?</h2>
+            <div class="row">
+                <div class="input-group">
+                    <label>학년</label>
+                    <input type="number" id="myGrade" placeholder="예) 2" required min="1" max="3">
+                </div>
+                <div class="input-group">
+                    <label>반</label>
+                    <input type="number" id="myClass" placeholder="예) 3" required min="1" max="15">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>이름</label>
+                <input type="text" id="myName" placeholder="내 이름을 적어주세요" required>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">칭찬 카드 보내기! 🚀</button>
+    </form>
+</div>
+
+<script>
+    // ⚠️ 주의: 지난번 생성한 구글 웹 앱 URL을 여기에 붙여넣으세요!
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwupI151g2eAVLm0sC6qLPEyB0xTYKZrrkUKym3EmPKCJv6mODABBujPDM9HSXrOBhb/exec";
+
+    document.getElementById('praiseForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // 기본 폼 제출 막기
+        
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "전송 중... ⏳";
+
+        // URLSearchParams 형식으로 데이터 조립 (지난번 GAS 파라미터명과 매칭)
+        const formData = new URLSearchParams();
+        formData.append('targetGrade', document.getElementById('targetGrade').value);
+        formData.append('targetClass', document.getElementById('targetClass').value);
+        formData.append('targetName', document.getElementById('targetName').value);
+        formData.append('reason', document.getElementById('reason').value);
+        formData.append('myGrade', document.getElementById('myGrade').value);
+        formData.append('myClass', document.getElementById('myClass').value);
+        formData.append('myName', document.getElementById('myName').value);
+
+        // 구글 스크립트 서버로 POST 전송
+        fetch(GAS_URL, {
+            method: 'POST',
+            contentType: 'application/x-www-form-urlencoded',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if(data === "SUCCESS") {
+                alert("칭찬 카드가 성공적으로 배달되었습니다! 🎉");
+                document.getElementById('praiseForm').reset(); // 입력창 초기화
+            } else {
+                alert("전송에 실패했습니다. 다시 시도해 주세요.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("오류가 발생했습니다. 네트워크 상태를 확인해 주세요.");
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerText = "칭찬 카드 보내기! 🚀";
+        });
+    });
+</script>
+
+</body>
+</html>
